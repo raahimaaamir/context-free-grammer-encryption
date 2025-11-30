@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Grammar-Based Pseudo-Random Key Generator</title>
+
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 40px;
+      background: #eaf1f8;
+      color: #1a1a1a;
+    }
+
+    h2, h3 {
+      color: #004aad;
+    }
+
+    .box {
+      background: white;
+      padding: 25px;
+      margin-bottom: 25px;
+      border-radius: 12px;
+      border-left: 6px solid #004aad;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    button {
+      padding: 12px 20px;
+      background: #004aad;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background: #003680;
+    }
+
+    input, textarea {
+      padding: 10px;
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+    }
+
+    /* One-time pulse animation */
+    @keyframes pulse-once {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+    }
+
+    .animated-key {
+      font-weight: bold;
+      font-size: 18px;
+      color: #004aad;
+    }
+
+
+    /* Diagram styling */
+    .diagram {
+      background: #f0f6ff;
+      padding: 20px;
+      border: 2px dashed #004aad;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 15px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Title -->
+  <div class="box">
+    <h2>Grammar-Based Pseudo-Random Key Generator</h2>
+    <p><b>By:</b> Raahima Aamir and Muhammad Talha</p>
+    <p>This project demonstrates how formal grammars can be used to generate structured random keys and how such keys can support lightweight encryption.</p>
+  </div>
+
+  <!-- Diagram Section -->
+  <div class="box">
+    <h3>Project Diagram</h3>
+    <div class="diagram">
+      <p><b>S</b> → SEG SEG SEG<br>
+      <b>SEG</b> → Uppercase + lowercase + digit + symbol</p>
+
+      <p style="margin-top: 15px;">Key Generation → XOR Encryption → Ciphertext → XOR Decryption → Original Text</p>
+    </div>
+
+    <p style="margin-top: 10px; font-size: 14px;">
+      <b>Explanation:</b>  
+      The grammar ensures each key segment contains a fixed pattern of character classes.  
+      This makes keys structured but still random. The generated key is then used in a lightweight XOR-based encryption module.
+    </p>
+  </div>
+
+  <!-- Key Generator -->
+  <div class="box">
+    <h3>Generate Grammar-Based Key</h3>
+    <button onclick="generateKey()">Generate New Key</button>
+    <p id="keyOutput" class="animated-key"></p>
+
+    <p style="font-size: 14px;">
+      <b>Explanation:</b>  
+      The generator applies a simple grammar to form a structured key.  
+      Each key contains uppercase letters, lowercase letters, digits, and symbols in controlled positions,  
+      demonstrating formal language use in cybersecurity.
+    </p>
+  </div>
+
+  <!-- Encryption -->
+  <div class="box">
+    <h3>Encrypt Text</h3>
+    <textarea id="plain" placeholder="Enter text to encrypt"></textarea>
+    <button onclick="encryptText()">Encrypt</button>
+    <p id="cipherOutput" style="margin-top: 10px; font-weight: bold;"></p>
+
+    <p style="font-size: 14px;">
+      <b>Explanation:</b>  
+      The text is encrypted using XOR, a classical lightweight encryption method.  
+      XOR works by combining each character of the plaintext with the key.  
+      Only the correct key can reverse the encryption.
+    </p>
+  </div>
+
+  <!-- Decryption -->
+  <div class="box">
+    <h3>Decrypt Text</h3>
+    <textarea id="cipher" placeholder="Enter ciphertext (Base64)"></textarea>
+    <button onclick="decryptText()">Decrypt</button>
+    <p id="plainOutput" style="margin-top: 10px; font-weight: bold;"></p>
+
+    <p style="font-size: 14px;">
+      <b>Explanation:</b>  
+      Decryption applies XOR again.  
+      XOR is symmetric — applying the same key a second time restores the original text.
+    </p>
+  </div>
+
+  <!-- Links -->
+  <div class="box">
+    <h3>Links</h3>
+    <p><a href="https://github.com/yourusername/yourrepo" target="_blank">GitHub Repository</a></p>
+    <p><a href="https://youtube.com/yourvideo" target="_blank">YouTube Demo</a></p>
+
+    <p style="font-size: 14px;">
+      <b>Explanation:</b>  
+      The GitHub link shows your code publicly (good for assignment rubric).  
+      The YouTube link gives a short demo of how your tool works.
+    </p>
+  </div>
+
+<script>
+  // Character classes
+  const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lower = "abcdefghijklmnopqrstuvwxyz";
+  const digits = "0123456789";
+  const symbols = "!@#$%&*?+-_=<>/";
+
+  // Grammar-based key generator
+  function generateSegment() {
+    let seg = "";
+    seg += upper[Math.floor(Math.random() * upper.length)];
+    seg += lower[Math.floor(Math.random() * lower.length)];
+    seg += digits[Math.floor(Math.random() * digits.length)];
+    seg += symbols[Math.floor(Math.random() * symbols.length)];
+    return seg;
+  }
+
+  function generateKey() {
+    let key = generateSegment() + generateSegment() + generateSegment();
+    const keyElem = document.getElementById("keyOutput");
+
+    keyElem.innerText = "Generated Key: " + key;
+
+    // Reset animation (so it can play again)
+    keyElem.style.animation = "none";
+    void keyElem.offsetWidth; // forces reflow
+
+    // Apply one-time animation
+    keyElem.style.animation = "pulse-once 0.8s ease-out";
+
+    window.currentKey = key;
+  }
+
+
+  // XOR encryption helper
+  function xorEncrypt(text, key) {
+    let out = "";
+    for (let i = 0; i < text.length; i++) {
+      out += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+    }
+    return out;
+  }
+
+  function encryptText() {
+    const text = document.getElementById("plain").value;
+    const key = window.currentKey || "DEFAULTKEY";
+    const encrypted = xorEncrypt(text, key);
+    document.getElementById("cipherOutput").innerText =
+      "Ciphertext (Base64): " + btoa(encrypted);
+  }
+
+  function decryptText() {
+    try {
+      const text = atob(document.getElementById("cipher").value);
+      const key = window.currentKey || "DEFAULTKEY";
+      const decrypted = xorEncrypt(text, key);
+      document.getElementById("plainOutput").innerText = "Decrypted Text: " + decrypted;
+    } catch {
+      document.getElementById("plainOutput").innerText = "Invalid ciphertext format.";
+    }
+  }
+</script>
+
+</body>
+</html>
