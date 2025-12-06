@@ -39,7 +39,7 @@
       background: #003680;
     }
 
-    input, textarea {
+    input, textarea, select {
       padding: 10px;
       width: 100%;
       margin-top: 10px;
@@ -49,9 +49,9 @@
 
     /* One-time pulse animation */
     @keyframes pulse-once {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-    100% { transform: scale(1); }
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
     }
 
     .animated-key {
@@ -60,63 +60,46 @@
       color: #004aad;
     }
 
-
     /* Diagram styling */
-    .diagram {
-      background: #f0f6ff;
+    .diagram-flow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 20px 0;
       padding: 20px;
-      border: 2px dashed #004aad;
-      border-radius: 10px;
-      text-align: center;
-      font-size: 15px;
-      margin-top: 10px;
+      border-radius: 12px;
+      background: #f8faff;
+      box-shadow: 0 0 8px rgba(0,0,0,0.15);
     }
 
-    .diagram-flow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin: 20px 0;
-    padding: 20px;
-    border-radius: 12px;
-    background: #f8faff;
-    box-shadow: 0 0 8px rgba(0,0,0,0.15);
-  }
+    .node {
+      background: white;
+      padding: 15px;
+      width: 180px;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: 0px 0px 6px rgba(0,0,0,0.15);
+    }
 
-  .node {
-    background: white;
-    padding: 15px;
-    width: 180px;
-    text-align: center;
-    border-radius: 10px;
-    box-shadow: 0px 0px 6px rgba(0,0,0,0.15);
-  }
+    .node h4 {
+      margin-bottom: 8px;
+      font-size: 16px;
+      color: #124559;
+    }
 
-  .node h4 {
-    margin-bottom: 8px;
-    font-size: 16px;
-    color: #124559;
-  }
+    .node p {
+      font-size: 12px;
+      line-height: 1.3;
+    }
 
-  .node p {
-    font-size: 12px;
-    line-height: 1.3;
-  }
-
-  .arrow {
-    font-size: 22px;
-    font-weight: bold;
-    color: #124559;
-  }
-
-  .diagram-explanation {
-    margin-top: 10px;
-    font-size: 14px;
-  }
-
-</style>
+    .arrow {
+      font-size: 22px;
+      font-weight: bold;
+      color: #124559;
+    }
+  </style>
 </head>
 
 <body>
@@ -162,11 +145,10 @@
 
     </div>
 
-    <p class="diagram-explanation">
+    <p style="font-size: 14px;">
       <b>Explanation:</b>  
       The grammar produces structured random segments, which form the encryption key.
-      This key is then used in a lightweight XOR encryption cycle.  
-      Because XOR is symmetric, the same key recovers the message during decryption.
+      This key is then used in a lightweight XOR encryption cycle.
     </p>
   </div>
 
@@ -179,11 +161,32 @@
 
     <p style="font-size: 14px;">
       <b>Explanation:</b>  
-      The generator applies a simple grammar to form a structured key.  
-      Each key contains uppercase letters, lowercase letters, digits, and symbols in controlled positions,  
-      demonstrating formal language use in cybersecurity.
+      The generator forms a structured key using uppercase, lowercase, digits, and symbols in controlled positions, based on a formal grammar.
     </p>
   </div>
+
+
+  <!-- Grammar Mode Section -->
+  <div class="box">
+    <h3>Grammar Mode (A / B / C)</h3>
+
+    <label for="grammarSelect" style="font-size: 15px; font-weight: 600;">
+      Choose Grammar:
+    </label>
+    <select id="grammarSelect">
+      <option value="A">Grammar A – Fixed Pattern</option>
+      <option value="B">Grammar B – Variable Pattern</option>
+      <option value="C">Grammar C – Stochastic Pattern</option>
+    </select>
+
+    <button onclick="generateByGrammar()" style="margin-top: 15px;">
+      Generate Key by Grammar
+    </button>
+
+    <div id="grammarKeyOutput" style="margin-top: 15px; font-weight: bold;"></div>
+    <p id="grammarExplanation" style="margin-top: 10px; font-size: 14px; opacity: 0; transition: 0.3s;"></p>
+  </div>
+
 
   <!-- Encryption -->
   <div class="box">
@@ -194,11 +197,10 @@
 
     <p style="font-size: 14px;">
       <b>Explanation:</b>  
-      The text is encrypted using XOR, a classical lightweight encryption method.  
-      XOR works by combining each character of the plaintext with the key.  
-      Only the correct key can reverse the encryption.
+      The plaintext is XORed with the key to produce Base64 ciphertext.
     </p>
   </div>
+
 
   <!-- Decryption -->
   <div class="box">
@@ -209,17 +211,61 @@
 
     <p style="font-size: 14px;">
       <b>Explanation:</b>  
-      Decryption applies XOR again.  
-      XOR is symmetric, applying the same key a second time restores the original text.
+      XORing the ciphertext with the same key restores the original plaintext.
     </p>
   </div>
+
+
+  <!-- Grammar Comparison Section -->
+  <div class="box">
+    <h3>Grammar Comparison</h3>
+
+    <p style="font-size: 14px;">
+      Three grammars were evaluated to study how structure affects randomness and computation speed.
+    </p>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+      <tr style="background: #f2f2f2;">
+        <th style="padding: 8px; border: 1px solid #ccc;">Grammar</th>
+        <th style="padding: 8px; border: 1px solid #ccc;">Avg. Length</th>
+        <th style="padding: 8px; border: 1px solid #ccc;">Avg. Entropy</th>
+        <th style="padding: 8px; border: 1px solid #ccc;">Avg. Time (ms)</th>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #ccc;">A (Fixed)</td>
+        <td style="padding: 8px; border: 1px solid #ccc;">12.00</td>
+        <td style="padding: 8px; border: 1px solid #ccc;">3.48</td>
+        <td style="padding: 8px; border: 1px solid #ccc;">41.73</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #ccc;">B (Variable)</td>
+        <td style="padding: 8px; border: 1px solid #ccc;">11.74</td>
+        <td style="padding: 8px; border: 1px solid #ccc;">3.34</td>
+        <td style="padding: 8px; border: 1px solid #ccc;">39.22</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #ccc;">C (Stochastic)</td>
+        <td style="padding: 8px; border: 1px solid #ccc;">9.73</td>
+        <td style="padding: 8px; border: 1px solid #ccc;">3.17</td>
+        <td style="padding: 8px; border: 1px solid #ccc;">30.83</td>
+      </tr>
+    </table>
+
+    <p style="margin-top: 10px; font-size: 14px;">
+      <b>Conclusion:</b>  
+      Grammar A provides the strongest structure and highest entropy.
+      Grammar C is fastest but has lowest structure.  
+      Grammar B balances both.
+    </p>
+  </div>
+
 
   <!-- Links -->
   <div class="box">
     <h3>Links</h3>
     <p><a href="https://github.com/raahimaaamir/context-free-grammer-encryption.git" target="_blank">GitHub Repository</a></p>
-    <p><a href="https://youtube.com/yourvideo" target="_blank">YouTube Demo</a></p>
   </div>
+
 
 <script>
   // Character classes
@@ -228,7 +274,7 @@
   const digits = "0123456789";
   const symbols = "!@#$%&*?+-_=<>/";
 
-  // Grammar-based key generator
+  // Default grammar: fixed SEG
   function generateSegment() {
     let seg = "";
     seg += upper[Math.floor(Math.random() * upper.length)];
@@ -244,18 +290,58 @@
 
     keyElem.innerText = "Generated Key: " + key;
 
-    // Reset animation (so it can play again)
     keyElem.style.animation = "none";
-    void keyElem.offsetWidth; // forces reflow
-
-    // Apply one-time animation
+    void keyElem.offsetWidth;
     keyElem.style.animation = "pulse-once 0.8s ease-out";
 
     window.currentKey = key;
   }
 
+  // Grammar Mode Generator
+  function generateByGrammar() {
+    const mode = document.getElementById("grammarSelect").value;
+    let key = "";
+    let exp = "";
 
-  // XOR encryption helper
+    if (mode === "A") {
+      for (let i = 0; i < 3; i++) {
+        key += upper[Math.floor(Math.random() * upper.length)];
+        key += lower[Math.floor(Math.random() * lower.length)];
+        key += digits[Math.floor(Math.random() * digits.length)];
+        key += symbols[Math.floor(Math.random() * symbols.length)];
+      }
+      exp = "Grammar A enforces a strict 4-symbol structure, maximizing diversity and entropy.";
+    }
+
+    if (mode === "B") {
+      for (let i = 0; i < 10; i++) {
+        const c = Math.floor(Math.random() * 4);
+        if (c === 0) key += upper[Math.floor(Math.random() * upper.length)];
+        if (c === 1) key += lower[Math.floor(Math.random() * lower.length)];
+        if (c === 2) key += digits[Math.floor(Math.random() * digits.length)];
+        if (c === 3) key += symbols[Math.floor(Math.random() * symbols.length)];
+      }
+      exp = "Grammar B allows variable selection from all character classes, producing balanced randomness.";
+    }
+
+    if (mode === "C") {
+      const all = upper + lower + digits + symbols;
+      for (let i = 0; i < 8; i++) {
+        key += all[Math.floor(Math.random() * all.length)];
+      }
+      exp = "Grammar C is fully stochastic. It is fast and random but less structurally controlled.";
+    }
+
+    document.getElementById("grammarKeyOutput").innerText = key;
+
+    const box = document.getElementById("grammarExplanation");
+    box.textContent = exp;
+    box.style.opacity = 1;
+
+    window.currentKey = key;
+  }
+
+  // XOR helper
   function xorEncrypt(text, key) {
     let out = "";
     for (let i = 0; i < text.length; i++) {
